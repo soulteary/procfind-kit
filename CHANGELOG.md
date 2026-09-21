@@ -16,11 +16,11 @@ a shell variable, and the file that looks like it might, `.path`, holds a
 `PATH` string. Code that went looking for a pid file found nothing every time,
 concluded the process was dead, and started a second copy.
 
-**Requires Go 1.22 or newer.** A library's `go` directive is a hard floor for
-everyone who imports it, so it is kept as low as the code allows rather than
-tracking the newest toolchain. The package builds on every platform; without a
-procfs to read — on Windows, or anywhere `/proc` is not mounted — every lookup
-reports "not found" rather than guessing.
+**Requires Go 1.27 or newer.** The kits track the current Go release together.
+Note that a library's `go` directive is a hard minimum for everyone who imports
+it: `go get` raises the consumer's own `go.mod` to match. The package builds on
+every platform; without a procfs to read — on Windows, or anywhere `/proc` is
+not mounted — every lookup reports "not found" rather than guessing.
 
 ### What 1.0.0 provides
 
@@ -50,7 +50,7 @@ reports "not found" rather than guessing.
   external test package building a fake procfs under `Scanner.Root`, so they
   show exactly what `Find` returns and cannot drift from the exported API.
 - CI covering formatting, vet, tests, golangci-lint and govulncheck, with the
-  test job run against Go 1.22 and the current release on Linux and macOS, and
+  test job run against Go 1.27 and the current release on Linux and macOS, and
   a `GOOS=windows` build to keep the package compiling where there is no
   procfs. The HTML coverage report is uploaded as a build artifact; no coverage
   service is involved.
