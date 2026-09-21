@@ -102,7 +102,10 @@ The package-level `Find` / `FindMany` / `Running` are `Scanner{}` with `Root` de
 
 ## Requirements
 
-- **Go 1.27+** (`go.mod` declares `go 1.27.0`)
+- **Go 1.22+** (`go.mod` declares `go 1.22.0`). Nothing here needs a newer
+  toolchain, and a library's `go` directive is a hard floor for everyone who
+  imports it, so it is kept as low as the code allows. CI tests against 1.22
+  and the current release.
 - **No dependencies.** The standard library is the whole of it, tests included.
 - **A procfs to read.** The package builds and runs everywhere — on Windows,
   and anywhere `/proc` is not mounted, every lookup reports "not found" rather
@@ -120,9 +123,11 @@ go tool cover -html=coverage.out -o coverage.html
 go tool cover -func=coverage.out
 ```
 
-Statement coverage is **96.6%**, and no test needs a real process table —
-`Scanner.Root` points at a fixture directory. CI uploads the browsable HTML
-report as a build artifact on every run; no coverage service is involved.
+Statement coverage is **96.5%**, and no test needs a real process table —
+`Scanner.Root` points at a fixture directory. The test job runs on Linux and
+macOS, against Go 1.22 and the current release; one of those combinations
+uploads the browsable HTML report as a build artifact. No coverage service is
+involved.
 
 The runnable examples in `example_test.go` are part of the suite. They are an
 *external* test package (`package procfind_test`), so they compile only against
