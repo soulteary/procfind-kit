@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/soulteary/procfind-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/soulteary/procfind-kit/actions/workflows/ci.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/soulteary/procfind-kit.svg)](https://pkg.go.dev/github.com/soulteary/procfind-kit)
+[![Go Report Card](.github/goreportcard.svg)](.github/goreportcard-report.md)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 Find the running processes that belong to a directory, for programs that don't write a pid file. Zero dependencies.
 
@@ -97,6 +99,56 @@ The package-level `Find` / `FindMany` / `Running` are `Scanner{}` with `Root` de
 | `Spec{Scripts, Executables}` | Paths, relative to the directory, that identify a process |
 
 `FindMany` keys its result by the exact strings passed in — two spellings of the same directory each get an entry, holding the same pids.
+
+## Requirements
+
+- **Go 1.27+** (`go.mod` declares `go 1.27.0`)
+- **No dependencies.** The standard library is the whole of it, tests included.
+- **A procfs to read.** The package builds and runs everywhere — on Windows,
+  and anywhere `/proc` is not mounted, every lookup reports "not found" rather
+  than guessing. `hidepid=1` or `hidepid=2` on `/proc` has the same effect for
+  processes owned by other users.
+
+## Test Coverage
+
+```bash
+go test ./... -v
+
+# With coverage — what CI runs
+go test -race -coverprofile=coverage.out -covermode=atomic ./...
+go tool cover -html=coverage.out -o coverage.html
+go tool cover -func=coverage.out
+```
+
+Statement coverage is **96.6%**, and no test needs a real process table —
+`Scanner.Root` points at a fixture directory. CI uploads the browsable HTML
+report as a build artifact on every run; no coverage service is involved.
+
+The runnable examples in `example_test.go` are part of the suite. They are an
+*external* test package (`package procfind_test`), so they compile only against
+the exported API — which keeps that API honest about being usable from outside
+— and `go test` checks their printed output, so they cannot drift from what the
+docs claim.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
+## Security
+
+A match is not proof of identity: argv is set by whoever started the process,
+so any local user can make `Running` answer true. That, the pid-reuse window a
+caller signals into, and why the package reads `cmdline` rather than following
+`/proc/<pid>/exe`, are in [SECURITY.md](SECURITY.md) — along with how to report
+a vulnerability. Please do not open a public issue for one.
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 

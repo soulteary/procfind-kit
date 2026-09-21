@@ -1,20 +1,3 @@
-// Package procfind reports which running processes belong to a given
-// directory, by reading /proc and matching each process's argv against paths
-// under that directory.
-//
-// It exists because a whole class of programs do not write a pid file. The
-// GitHub Actions runner is the case this package was extracted from: none of
-// its three launch scripts records a pid anywhere -- the value lives only in a
-// shell variable -- and the file that looks like it might (.path) holds a PATH
-// string. Code that went looking for a pid file therefore found nothing, every
-// time, and concluded the process was dead. A supervisor acting on that
-// conclusion starts a second copy every time it checks.
-//
-// The approach here is to ask the process table instead: a process belongs to
-// a directory when its argv names a file inside that directory.
-//
-// Only systems with a procfs (Linux) are supported. Everywhere else every
-// lookup reports "not found" rather than guessing.
 package procfind
 
 import (
