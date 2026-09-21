@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/soulteary/procfind-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/soulteary/procfind-kit/actions/workflows/ci.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/soulteary/procfind-kit.svg)](https://pkg.go.dev/github.com/soulteary/procfind-kit)
+[![Go Report Card](.github/goreportcard.svg)](.github/goreportcard-report.md)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 为「不写 pid 文件」的程序，按目录找出正在运行的进程。零依赖。
 
@@ -94,6 +96,55 @@ pids := s.Find("/srv/app", spec)
 | `Spec{Scripts, Executables}` | 相对目录的路径，用于识别进程 |
 
 `FindMany` 按传入的原字符串索引结果 —— 同一目录的两种写法各有一个条目，内容相同。
+
+## 要求
+
+- **Go 1.27+**（`go.mod` 中声明 `go 1.27.0`）
+- **零依赖。** 连测试在内，全部只用标准库。
+- **需要有 procfs 可读。** 本包在任何平台都能编译和运行 —— 在 Windows 上、以及
+  任何没有挂载 `/proc` 的地方，每次查询都会如实报告「没找到」，而不是去猜。
+  `/proc` 以 `hidepid=1` 或 `hidepid=2` 挂载时，对属于其他用户的进程也是同样
+  的结果。
+
+## 测试覆盖率
+
+```bash
+go test ./... -v
+
+# 带覆盖率 —— CI 实际执行的命令
+go test -race -coverprofile=coverage.out -covermode=atomic ./...
+go tool cover -html=coverage.out -o coverage.html
+go tool cover -func=coverage.out
+```
+
+语句覆盖率为 **96.6%**，且没有一个测试需要真实的进程表 —— `Scanner.Root` 指向
+一个 fixture 目录即可。CI 每次运行都会把可浏览的 HTML 报告作为构建产物上传；
+不接入任何覆盖率服务。
+
+`example_test.go` 里的可运行示例是测试套件的一部分。它们是*外部*测试包
+（`package procfind_test`），只能编译到导出的 API —— 这能逼着这套 API 对包外
+调用者保持可用 —— 而且 `go test` 会校验它们打印的输出，因此示例不会与文档
+所述发生偏移。
+
+## 变更日志
+
+见 [CHANGELOG.md](CHANGELOG.md)。
+
+## 安全
+
+匹配上了并不等于身份得到了证明：argv 由启动进程的人设定，因此任何本地用户都能
+让 `Running` 返回 true。这一点、调用方发信号时要面对的 pid 复用窗口，以及本包
+为什么读 `cmdline` 而不是去跟 `/proc/<pid>/exe` 链接，都写在
+[SECURITY.md](SECURITY.md) 里 —— 一并还有如何上报安全问题。请不要为安全问题开
+公开 issue。
+
+## 贡献
+
+1. Fork 本仓库
+2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 提交 Pull Request
 
 ## 许可证
 
