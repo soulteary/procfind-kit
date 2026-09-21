@@ -125,9 +125,8 @@ go tool cover -func=coverage.out
 
 Statement coverage is **96.6%**, and no test needs a real process table —
 `Scanner.Root` points at a fixture directory. The test job runs on Linux and
-macOS, against Go 1.27 and the current release; one of those combinations
-uploads the browsable HTML report as a build artifact. No coverage service is
-involved.
+macOS, on the Go version `go.mod` declares; the Linux job uploads the browsable
+HTML report as a build artifact. No coverage service is involved.
 
 The runnable examples in `example_test.go` are part of the suite. They are an
 *external* test package (`package procfind_test`), so they compile only against

@@ -50,10 +50,10 @@ not mounted — every lookup reports "not found" rather than guessing.
   external test package building a fake procfs under `Scanner.Root`, so they
   show exactly what `Find` returns and cannot drift from the exported API.
 - CI covering formatting, vet, tests, golangci-lint and govulncheck, with the
-  test job run against Go 1.27 and the current release on Linux and macOS, and
-  a `GOOS=windows` build to keep the package compiling where there is no
-  procfs. The HTML coverage report is uploaded as a build artifact; no coverage
-  service is involved.
+  test job run on Linux and macOS, and a `GOOS=windows` build to keep the
+  package compiling where there is no procfs. Every job takes its Go version
+  from `go.mod`. The HTML coverage report is uploaded as a build artifact; no
+  coverage service is involved.
 - A Go Report Card workflow, run on demand, that regenerates the badge and
   report and commits them back.
 
