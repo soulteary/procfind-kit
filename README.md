@@ -99,7 +99,7 @@ The package-level `Find` / `FindMany` / `Running` are `Scanner{}` with `Root` de
 
 ## Requirements
 
-- **Go 1.27+** (`go.mod` declares `go 1.27.2`). The kits track the current Go
+- **Go 1.27.2+** (`go.mod` declares `go 1.27.2`). The kits track the current Go
   release together, so this is a deliberate floor rather than the lowest the
   code could run on. Note that a library's `go` directive is a hard minimum for
   everyone who imports it: `go get` will raise your own `go.mod` to match.
